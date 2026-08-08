@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="page-shell">
+  <section class="product-detail-section">
+    <a href="{{ url_for('index') }}#collection" class="btn ghost back-link">{{ '← رجوع للمجموعة' if is_ar() else '← Back to collection' }}</a>
+
+    <div class="product-detail-grid">
+      <div class="product-visual product-visual-large">
+        <div class="{{ p.visual }}"></div>
+      </div>
+
+      <div class="product-detail-info">
+        <p class="eyebrow">{{ p.accent_ar if is_ar() else p.accent_en }}</p>
+        <h1>{{ p.name_ar if is_ar() else p.name_en }}</h1>
+        <p class="hero-text">{{ p.description_ar if is_ar() else p.description_en }}</p>
+        <p class="price big-price">{{ p.price }} د.ج</p>
+        <p class="inventory">{{ 'الكمية المتوفرة: ' ~ p.quantity if is_ar() else 'Available stock: ' ~ p.quantity }}</p>
+
+        <form method="post" action="{{ url_for('cart_add') }}" class="size-qty-widget add-to-cart-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <input type="hidden" name="product_id" value="{{ p.id }}" />
+          <input type="hidden" name="next" value="{{ request.path }}" />
+          <input type="hidden" name="size" value="{{ p.sizes.split(',')[0] }}" class="size-hidden" />
+
+          <div class="form-group">
+            <label>{{ 'المقاس' if is_ar() else 'Size' }}</label>
+            <div class="size-picker">
+              {% for size in p.sizes.split(',') %}
+              <button type="button" class="size-btn {{ 'active' if loop.first else '' }}" data-size="{{ size }}">{{ size }}</button>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>{{ 'الكمية' if is_ar() else 'Quantity' }}</label>
+            <div class="quantity-picker">
+              <button type="button" class="qty-btn" data-action="minus">-</button>
+              <input class="qty-input" type="number" name="quantity" min="1" max="10" value="1" />
+              <button type="button" class="qty-btn" data-action="plus">+</button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn primary full-width">{{ 'أضف إلى السلة' if is_ar() else 'Add to cart' }}</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

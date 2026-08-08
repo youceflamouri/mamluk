@@ -1,0 +1,30 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<h2>{{ 'رسائل التواصل' if is_ar() else 'Contact Messages' }}</h2>
+<table class="admin-table">
+  <thead>
+    <tr>
+      <th>{{ 'الاسم' if is_ar() else 'Name' }}</th>
+      <th>{{ 'البريد' if is_ar() else 'Email' }}</th>
+      <th>{{ 'الهاتف' if is_ar() else 'Phone' }}</th>
+      <th>{{ 'الموضوع' if is_ar() else 'Subject' }}</th>
+      <th>{{ 'الرسالة' if is_ar() else 'Message' }}</th>
+      <th>{{ 'التاريخ' if is_ar() else 'Date' }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for m in messages %}
+    <tr>
+      <td>{{ m.name }}</td>
+      <td>{{ m.email }}</td>
+      <td>{{ m.phone }}</td>
+      <td>{{ m.subject }}</td>
+      <td>{{ m.message }}</td>
+      <td>{{ m.created_at[:16] }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6" class="muted">{{ 'لا توجد رسائل بعد' if is_ar() else 'No messages yet' }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

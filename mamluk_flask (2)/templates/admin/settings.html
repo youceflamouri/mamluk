@@ -1,0 +1,68 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<h2>{{ 'الواجهة الأمامية وبيانات التواصل' if is_ar() else 'Front Page & Contact Info' }}</h2>
+
+{% if request.args.get('settings_ok') %}
+<p class="form-success">{{ 'تم الحفظ بنجاح.' if is_ar() else 'Saved successfully.' }}</p>
+{% elif request.args.get('settings_error') %}
+<p class="form-error">{{ 'تحقق من الحقول — البريد الإلكتروني ورقم واتساب مطلوبان وصحيحان، وباقي الحقول لا يجب أن تكون فارغة.' if is_ar() else 'Check the fields — a valid email and WhatsApp number are required, and no other field may be empty.' }}</p>
+{% endif %}
+
+<form method="post" action="{{ url_for('admin_settings_update') }}" class="settings-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+  <div class="settings-group">
+    <h3>{{ 'بيانات التواصل (تظهر في الموقع وزر واتساب العائم)' if is_ar() else 'Contact info (shown on the site & floating WhatsApp button)' }}</h3>
+    <div class="settings-row">
+      <label>{{ 'البريد الإلكتروني الظاهر للزوار' if is_ar() else 'Public contact email' }}
+        <input type="email" name="contact_email" value="{{ s.contact_email }}" maxlength="150" required />
+      </label>
+      <label>{{ 'رقم واتساب (بصيغة دولية بدون + أو مسافات، مثال: 213555123456)' if is_ar() else 'WhatsApp number (international, digits only, e.g. 213555123456)' }}
+        <input type="text" name="whatsapp_number" value="{{ s.whatsapp_number }}" maxlength="20" required />
+      </label>
+    </div>
+  </div>
+
+  <div class="settings-group">
+    <h3>{{ 'قسم الاستقبال (Hero)' if is_ar() else 'Hero section' }}</h3>
+    <div class="settings-row">
+      <label>{{ 'الشعار الصغير (عربي)' if is_ar() else 'Eyebrow (Arabic)' }}<input type="text" name="hero_eyebrow_ar" value="{{ s.hero_eyebrow_ar }}" maxlength="150" required /></label>
+      <label>{{ 'الشعار الصغير (إنجليزي)' if is_ar() else 'Eyebrow (English)' }}<input type="text" name="hero_eyebrow_en" value="{{ s.hero_eyebrow_en }}" maxlength="150" required /></label>
+    </div>
+    <div class="settings-row">
+      <label>{{ 'العنوان الرئيسي (عربي)' if is_ar() else 'Title (Arabic)' }}<input type="text" name="hero_title_ar" value="{{ s.hero_title_ar }}" maxlength="150" required /></label>
+      <label>{{ 'العنوان الرئيسي (إنجليزي)' if is_ar() else 'Title (English)' }}<input type="text" name="hero_title_en" value="{{ s.hero_title_en }}" maxlength="150" required /></label>
+    </div>
+    <div class="settings-row">
+      <label>{{ 'الوصف (عربي)' if is_ar() else 'Description (Arabic)' }}<textarea name="hero_text_ar" rows="3" maxlength="600" required>{{ s.hero_text_ar }}</textarea></label>
+      <label>{{ 'الوصف (إنجليزي)' if is_ar() else 'Description (English)' }}<textarea name="hero_text_en" rows="3" maxlength="600" required>{{ s.hero_text_en }}</textarea></label>
+    </div>
+    <div class="settings-row">
+      <label>{{ 'عنوان البطاقة الجانبية (عربي)' if is_ar() else 'Side card title (Arabic)' }}<input type="text" name="hero_card_title_ar" value="{{ s.hero_card_title_ar }}" maxlength="150" required /></label>
+      <label>{{ 'عنوان البطاقة الجانبية (إنجليزي)' if is_ar() else 'Side card title (English)' }}<input type="text" name="hero_card_title_en" value="{{ s.hero_card_title_en }}" maxlength="150" required /></label>
+    </div>
+    <div class="settings-row">
+      <label>{{ 'وصف البطاقة الجانبية (عربي)' if is_ar() else 'Side card text (Arabic)' }}<textarea name="hero_card_text_ar" rows="2" maxlength="300" required>{{ s.hero_card_text_ar }}</textarea></label>
+      <label>{{ 'وصف البطاقة الجانبية (إنجليزي)' if is_ar() else 'Side card text (English)' }}<textarea name="hero_card_text_en" rows="2" maxlength="300" required>{{ s.hero_card_text_en }}</textarea></label>
+    </div>
+  </div>
+
+  <div class="settings-group">
+    <h3>{{ 'قسم الدعم الفني' if is_ar() else 'Support section' }}</h3>
+    <div class="settings-row">
+      <label>{{ 'نص الدعم (عربي)' if is_ar() else 'Support text (Arabic)' }}<textarea name="support_text_ar" rows="3" maxlength="600" required>{{ s.support_text_ar }}</textarea></label>
+      <label>{{ 'نص الدعم (إنجليزي)' if is_ar() else 'Support text (English)' }}<textarea name="support_text_en" rows="3" maxlength="600" required>{{ s.support_text_en }}</textarea></label>
+    </div>
+  </div>
+
+  <div class="settings-group">
+    <h3>{{ 'قسم طريقة الدفع' if is_ar() else 'Payment section' }}</h3>
+    <div class="settings-row">
+      <label>{{ 'نص الدفع (عربي)' if is_ar() else 'Payment text (Arabic)' }}<textarea name="payment_text_ar" rows="3" maxlength="600" required>{{ s.payment_text_ar }}</textarea></label>
+      <label>{{ 'نص الدفع (إنجليزي)' if is_ar() else 'Payment text (English)' }}<textarea name="payment_text_en" rows="3" maxlength="600" required>{{ s.payment_text_en }}</textarea></label>
+    </div>
+  </div>
+
+  <button type="submit" class="btn primary">{{ 'حفظ كل التغييرات' if is_ar() else 'Save all changes' }}</button>
+</form>
+{% endblock %}

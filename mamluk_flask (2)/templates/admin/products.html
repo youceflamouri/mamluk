@@ -1,0 +1,82 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<h2>{{ 'إدارة المنتجات' if is_ar() else 'Manage Products' }}</h2>
+
+{% if request.args.get('product_error') %}
+<p class="form-error">{{ 'تحقق من الحقول: كل الحقول مطلوبة، والمقاسات بصيغة صحيحة (مثال: S,M,L,XL).' if is_ar() else 'Check the fields: everything is required, and sizes must be valid (e.g. S,M,L,XL).' }}</p>
+{% endif %}
+
+<div class="admin-login mb-20">
+  <h3>{{ '+ إضافة منتج جديد' if is_ar() else '+ Add a new product' }}</h3>
+  <form class="admin-product-form" method="post" action="{{ url_for('admin_product_create') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="admin-field"><label>{{ 'الاسم (عربي)' if is_ar() else 'Name (Arabic)' }}</label>
+      <input type="text" name="name_ar" required maxlength="100" /></div>
+    <div class="admin-field"><label>{{ 'الاسم (إنجليزي)' if is_ar() else 'Name (English)' }}</label>
+      <input type="text" name="name_en" required maxlength="100" /></div>
+    <div class="admin-field"><label>{{ 'الوصف (عربي)' if is_ar() else 'Description (Arabic)' }}</label>
+      <textarea name="description_ar" rows="2" required maxlength="500"></textarea></div>
+    <div class="admin-field"><label>{{ 'الوصف (إنجليزي)' if is_ar() else 'Description (English)' }}</label>
+      <textarea name="description_en" rows="2" required maxlength="500"></textarea></div>
+    <div class="admin-field"><label>{{ 'وصف قصير/شعار (عربي)' if is_ar() else 'Tagline (Arabic)' }}</label>
+      <input type="text" name="accent_ar" required maxlength="100" /></div>
+    <div class="admin-field"><label>{{ 'وصف قصير/شعار (إنجليزي)' if is_ar() else 'Tagline (English)' }}</label>
+      <input type="text" name="accent_en" required maxlength="100" /></div>
+    <div class="admin-field"><label>{{ 'السعر (د.ج)' if is_ar() else 'Price (DZD)' }}</label>
+      <input type="number" name="price" min="0" max="9999999" required /></div>
+    <div class="admin-field"><label>{{ 'الكمية' if is_ar() else 'Quantity' }}</label>
+      <input type="number" name="quantity" min="0" max="10000" required /></div>
+    <div class="admin-field"><label>{{ 'المقاسات (مفصولة بفاصلة)' if is_ar() else 'Sizes (comma-separated)' }}</label>
+      <input type="text" name="sizes" placeholder="S,M,L,XL" required maxlength="60" /></div>
+    <div class="admin-field"><label>{{ 'نمط الشكل' if is_ar() else 'Visual style' }}</label>
+      <select name="visual">
+        {% for v in visual_choices %}
+        <option value="{{ v }}">{{ 'نمط ' ~ loop.index if is_ar() else 'Style ' ~ loop.index }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-actions"><button type="submit" class="btn primary">{{ 'إضافة المنتج' if is_ar() else 'Add product' }}</button></div>
+  </form>
+</div>
+
+<div class="admin-products-grid">
+  {% for p in products %}
+  <div class="admin-product-form">
+    <form method="post" action="{{ url_for('admin_product_update', product_id=p.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <div class="admin-field"><label>{{ 'الاسم (عربي)' if is_ar() else 'Name (Arabic)' }}</label>
+        <input type="text" name="name_ar" value="{{ p.name_ar }}" required maxlength="100" /></div>
+      <div class="admin-field"><label>{{ 'الاسم (إنجليزي)' if is_ar() else 'Name (English)' }}</label>
+        <input type="text" name="name_en" value="{{ p.name_en }}" required maxlength="100" /></div>
+      <div class="admin-field"><label>{{ 'الوصف (عربي)' if is_ar() else 'Description (Arabic)' }}</label>
+        <textarea name="description_ar" rows="2" required maxlength="500">{{ p.description_ar }}</textarea></div>
+      <div class="admin-field"><label>{{ 'الوصف (إنجليزي)' if is_ar() else 'Description (English)' }}</label>
+        <textarea name="description_en" rows="2" required maxlength="500">{{ p.description_en }}</textarea></div>
+      <div class="admin-field"><label>{{ 'وصف قصير/شعار (عربي)' if is_ar() else 'Tagline (Arabic)' }}</label>
+        <input type="text" name="accent_ar" value="{{ p.accent_ar }}" required maxlength="100" /></div>
+      <div class="admin-field"><label>{{ 'وصف قصير/شعار (إنجليزي)' if is_ar() else 'Tagline (English)' }}</label>
+        <input type="text" name="accent_en" value="{{ p.accent_en }}" required maxlength="100" /></div>
+      <div class="admin-field"><label>{{ 'السعر (د.ج)' if is_ar() else 'Price (DZD)' }}</label>
+        <input type="number" name="price" min="0" max="9999999" value="{{ p.price }}" required /></div>
+      <div class="admin-field"><label>{{ 'الكمية' if is_ar() else 'Quantity' }}</label>
+        <input type="number" name="quantity" min="0" max="10000" value="{{ p.quantity }}" required /></div>
+      <div class="admin-field"><label>{{ 'المقاسات (مفصولة بفاصلة)' if is_ar() else 'Sizes (comma-separated)' }}</label>
+        <input type="text" name="sizes" value="{{ p.sizes }}" required maxlength="60" /></div>
+      <div class="admin-field"><label>{{ 'نمط الشكل' if is_ar() else 'Visual style' }}</label>
+        <select name="visual">
+          {% for v in visual_choices %}
+          <option value="{{ v }}" {{ 'selected' if p.visual == v }}>{{ 'نمط ' ~ loop.index if is_ar() else 'Style ' ~ loop.index }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-actions"><button type="submit" class="btn primary">{{ 'حفظ' if is_ar() else 'Save' }}</button></div>
+    </form>
+    <form method="post" action="{{ url_for('admin_product_delete', product_id=p.id) }}"
+          class="confirm-submit" data-confirm="{{ 'هل تريد حذف هذا المنتج نهائيًا؟' if is_ar() else 'Permanently delete this product?' }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <button type="submit" class="btn ghost small delete-product-btn">{{ 'حذف المنتج' if is_ar() else 'Delete product' }}</button>
+    </form>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
