@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="page-shell">
+  <section class="hero contact-hero">
+    <div class="hero-copy">
+      <p class="eyebrow">{{ 'تواصل معنا' if is_ar() else 'Get in touch' }}</p>
+      <h1>{{ 'نحن هنا للاستماع' if is_ar() else "We're here to listen" }}</h1>
+      <p class="hero-text">{{ 'أرسل لنا رسالتك وسنرد عليك في أقرب وقت.' if is_ar() else "Send us a message and we'll get back to you soon." }}</p>
+      {% set s = settings() %}
+      <p class="contact-line">
+        <a href="https://wa.me/{{ s.whatsapp_number }}" target="_blank" rel="noopener">{{ 'راسلنا على واتساب' if is_ar() else 'Message us on WhatsApp' }}</a>
+        ·
+        <a href="mailto:{{ s.contact_email }}">{{ s.contact_email }}</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="info-section">
+    {% if sent %}
+      <p class="form-success">{{ 'تم إرسال الرسالة بنجاح! سنرد عليك قريبًا.' if is_ar() else 'Your message has been sent! We will reply soon.' }}</p>
+    {% endif %}
+    <form method="post" class="contact-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      {% if error %}<p class="form-error">{{ error }}</p>{% endif %}
+      <div class="form-group">
+        <label for="name">{{ 'الاسم' if is_ar() else 'Name' }}</label>
+        <input type="text" id="name" name="name" maxlength="100" required />
+      </div>
+      <div class="form-group">
+        <label for="email">{{ 'البريد الإلكتروني' if is_ar() else 'Email' }}</label>
+        <input type="email" id="email" name="email" maxlength="150" required />
+      </div>
+      <div class="form-group">
+        <label for="phone">{{ 'رقم الهاتف' if is_ar() else 'Phone number' }}</label>
+        <input type="tel" id="phone" name="phone" maxlength="20" />
+      </div>
+      <div class="form-group">
+        <label for="subject">{{ 'الموضوع' if is_ar() else 'Subject' }}</label>
+        <input type="text" id="subject" name="subject" maxlength="150" required />
+      </div>
+      <div class="form-group">
+        <label for="message">{{ 'الرسالة' if is_ar() else 'Message' }}</label>
+        <textarea id="message" name="message" rows="6" maxlength="2000" required></textarea>
+      </div>
+      <button type="submit" class="btn primary">{{ 'إرسال الرسالة' if is_ar() else 'Send message' }}</button>
+    </form>
+  </section>
+</main>
+{% endblock %}

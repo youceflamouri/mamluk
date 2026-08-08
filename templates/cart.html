@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="page-shell">
+  <section class="hero contact-hero">
+    <div class="hero-copy">
+      <p class="eyebrow">{{ 'السلة' if is_ar() else 'Cart' }}</p>
+      <h1>{{ 'تحقق من طلبك' if is_ar() else 'Review your order' }}</h1>
+      <p class="hero-text">{{ 'مراجعة وتعديل منتجاتك قبل الدفع.' if is_ar() else 'Review and adjust your items before checkout.' }}</p>
+    </div>
+  </section>
+
+  <section class="info-section">
+    {% if not items %}
+    <div class="empty-cart">
+      <p>{{ 'السلة فارغة حاليًا' if is_ar() else 'Your cart is currently empty' }}</p>
+      <a href="{{ url_for('index') }}#collection" class="btn primary">{{ 'تصفح المنتجات' if is_ar() else 'Browse products' }}</a>
+    </div>
+    {% else %}
+    <div class="cart-container">
+      <div class="cart-items">
+        <h2>{{ 'المنتجات المختارة' if is_ar() else 'Selected items' }}</h2>
+        {% for item in items %}
+        <div class="cart-item">
+          <div class="item-details">
+            <h4>{{ item.name }}</h4>
+            <p>{{ 'المقاس' if is_ar() else 'Size' }}: {{ item.size }}</p>
+            <p class="price">{{ item.price }} د.ج</p>
+          </div>
+          <div class="item-controls">
+            <form method="post" action="{{ url_for('cart_update') }}" class="qty-form">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+              <input type="hidden" name="product_id" value="{{ item.product_id }}" />
+              <input type="hidden" name="size" value="{{ item.size }}" />
+              <input type="number" name="quantity" min="1" max="10" value="{{ item.quantity }}" class="qty-input auto-submit" />
+            </form>
+            <form method="post" action="{{ url_for('cart_remove') }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+              <input type="hidden" name="product_id" value="{{ item.product_id }}" />
+              <input type="hidden" name="size" value="{{ item.size }}" />
+              <button type="submit" class="btn ghost">{{ 'حذف' if is_ar() else 'Remove' }}</button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="cart-summary">
+        <h3>{{ 'ملخص الطلب' if is_ar() else 'Order summary' }}</h3>
+
+        {% if discount_row %}
+        <form method="post" action="{{ url_for('cart_remove_coupon') }}" class="coupon-active">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <span>{{ 'الكود المُفعّل:' if is_ar() else 'Applied code:' }} <strong>{{ discount_row.code }}</strong></span>
+          <button type="submit" class="btn ghost small">{{ 'إزالة' if is_ar() else 'Remove' }}</button>
+        </form>
+        {% else %}
+        <form method="post" action="{{ url_for('cart_apply_coupon') }}" class="coupon-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <input type="text" name="code" placeholder="{{ 'كود الخصم' if is_ar() else 'Discount code' }}" maxlength="30" />
+          <button type="submit" class="btn ghost small">{{ 'تطبيق' if is_ar() else 'Apply' }}</button>
+        </form>
+        {% if request.args.get('coupon_error') %}
+        <p class="form-error small">{{ 'الكود غير صالح أو منتهي.' if is_ar() else 'Invalid or expired code.' }}</p>
+        {% endif %}
+        {% endif %}
+
+        <div class="summary-item"><span>{{ 'المجموع الجزئي:' if is_ar() else 'Subtotal:' }}</span><span>{{ subtotal }} د.ج</span></div>
+        {% if discount_amount %}
+        <div class="summary-item discount-line"><span>{{ 'الخصم:' if is_ar() else 'Discount:' }}</span><span>-{{ discount_amount }} د.ج</span></div>
+        {% endif %}
+        <div class="summary-item"><span>{{ 'الشحن:' if is_ar() else 'Shipping:' }}</span><span>{{ shipping_cost }} د.ج</span></div>
+        <div class="summary-item total"><span>{{ 'الإجمالي:' if is_ar() else 'Total:' }}</span><span>{{ total }} د.ج</span></div>
+        <a href="{{ url_for('checkout') }}" class="btn primary full-width">{{ 'الذهاب للدفع' if is_ar() else 'Proceed to checkout' }}</a>
+      </div>
+    </div>
+    {% endif %}
+  </section>
+</main>
+{% endblock %}

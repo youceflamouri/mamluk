@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="page-shell">
+  <section class="info-section text-center">
+    <h1>{{ 'تم استلام طلبك ✅' if is_ar() else 'Your order was received ✅' }}</h1>
+    <p class="hero-text">{{ 'سيتم الاتصال بك قريبًا لتأكيد التفاصيل.' if is_ar() else 'We will contact you soon to confirm the details.' }}</p>
+    <a href="{{ url_for('index') }}" class="btn primary">{{ 'العودة للرئيسية' if is_ar() else 'Back to home' }}</a>
+  </section>
+</main>
+{% endblock %}

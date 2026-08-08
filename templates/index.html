@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+{% set s = settings() %}
+<main class="page-shell">
+  <header class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">{{ s.hero_eyebrow_ar if is_ar() else s.hero_eyebrow_en }}</p>
+      <h1>{{ s.hero_title_ar if is_ar() else s.hero_title_en }}</h1>
+      <p class="hero-text">{{ s.hero_text_ar if is_ar() else s.hero_text_en }}</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#collection">{{ 'تصفح المجموعة' if is_ar() else 'Browse Collection' }}</a>
+        <a class="btn ghost" href="#about">{{ 'كيف تعمل التجربة' if is_ar() else 'How it works' }}</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-card-inner">
+        <span>{{ 'النسخة الجديدة' if is_ar() else 'New release' }}</span>
+        <h2>{{ s.hero_card_title_ar if is_ar() else s.hero_card_title_en }}</h2>
+        <p>{{ s.hero_card_text_ar if is_ar() else s.hero_card_text_en }}</p>
+      </div>
+    </div>
+  </header>
+
+  <section id="collection" class="products">
+    <div class="section-heading">
+      <p class="eyebrow">{{ 'المجموعة' if is_ar() else 'Collection' }}</p>
+      <h2>{{ 'اختَر لبسًا يفتح لك باب الفخامة' if is_ar() else 'Choose a garment that opens the door to luxury' }}</h2>
+      <p class="hero-text">{{ 'انقر على أي قطعة لعرض المقاسات والأسعار والكميات.' if is_ar() else 'Click any piece to see sizes, prices, and quantities.' }}</p>
+    </div>
+    <div class="product-grid">
+      {% for p in products %}
+      <a class="product-card" href="{{ url_for('product_detail', product_id=p.id) }}">
+        <div class="product-visual"><div class="{{ p.visual }}"></div></div>
+        <div class="product-info">
+          <h3>{{ p.name_ar if is_ar() else p.name_en }}</h3>
+          <p>{{ p.accent_ar if is_ar() else p.accent_en }}</p>
+          <span class="btn ghost full-width">{{ 'عرض المقاسات والأسعار' if is_ar() else 'View sizes & price' }}</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section id="about" class="how-it-works">
+    <div class="section-heading">
+      <p class="eyebrow">{{ 'التجربة' if is_ar() else 'Experience' }}</p>
+      <h2>{{ 'خطوات بسيطة، لكنّها تبدو ملكية' if is_ar() else 'Simple steps, yet they feel royal' }}</h2>
+    </div>
+    <div class="steps">
+      <article><h3>{{ '1. اختر اللبس' if is_ar() else '1. Pick a garment' }}</h3><p>{{ 'انقر على أي قطعة لفتح صفحتها الخاصة بالمقاسات والكميات.' if is_ar() else 'Click any piece to open its own sizes & quantity page.' }}</p></article>
+      <article><h3>{{ '2. حدد المقاس والكمية' if is_ar() else '2. Choose size & quantity' }}</h3><p>{{ 'اختر المقاس المناسب واضبط الكمية قبل الإضافة إلى السلة.' if is_ar() else 'Pick the right size and set the quantity before adding to cart.' }}</p></article>
+      <article><h3>{{ '3. أضف إلى السلة' if is_ar() else '3. Add to cart' }}</h3><p>{{ 'تمتع بتجربة تسوق مشدودة بصريًا مع مظهر عصري وملفت.' if is_ar() else 'Enjoy a visually striking, modern shopping experience.' }}</p></article>
+    </div>
+  </section>
+
+  <section id="support" class="info-section">
+    <div class="section-heading">
+      <p class="eyebrow">{{ 'الدعم الفني' if is_ar() else 'Support' }}</p>
+      <h2>{{ 'نحن هنا لمساعدتك' if is_ar() else 'We are here to help' }}</h2>
+    </div>
+    <p>{{ s.support_text_ar if is_ar() else s.support_text_en }}</p>
+    <p class="contact-line">
+      <a href="https://wa.me/{{ s.whatsapp_number }}" target="_blank" rel="noopener">{{ 'واتساب' if is_ar() else 'WhatsApp' }}</a>
+      ·
+      <a href="mailto:{{ s.contact_email }}">{{ s.contact_email }}</a>
+    </p>
+  </section>
+
+  <section id="payment" class="info-section">
+    <div class="section-heading">
+      <p class="eyebrow">{{ 'طريقة الدفع' if is_ar() else 'Payment' }}</p>
+      <h2>{{ 'دفع آمن ومريح' if is_ar() else 'Secure and convenient payment' }}</h2>
+    </div>
+    <p>{{ s.payment_text_ar if is_ar() else s.payment_text_en }}</p>
+  </section>
+</main>
+{% endblock %}
+

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="page-shell">
+  <section class="hero contact-hero">
+    <div class="hero-copy">
+      <p class="eyebrow">{{ 'الشحن والتوصيل' if is_ar() else 'Shipping & Delivery' }}</p>
+      <h1>{{ 'خدمة شحن ذكية ومريحة' if is_ar() else 'Smart and convenient shipping' }}</h1>
+      <p class="hero-text">{{ 'نوفر لك تتبعًا مباشرًا وتوصيلًا سريعًا مع تغليف فاخر وآمن لجميع الطلبات.' if is_ar() else 'Live tracking and fast delivery with premium, secure packaging for every order.' }}</p>
+    </div>
+  </section>
+
+  <section class="info-section">
+    <div class="shipping-grid">
+      <article class="shipping-card">
+        <h3>{{ 'التوصيل السريع' if is_ar() else 'Fast delivery' }}</h3>
+        <p>{{ 'توصيل إلى جميع الولايات الـ 58 في الجزائر خلال 2-5 أيام عمل.' if is_ar() else 'Delivery to all 58 provinces of Algeria within 2-5 business days.' }}</p>
+      </article>
+      <article class="shipping-card">
+        <h3>{{ 'التغليف الآمن' if is_ar() else 'Secure packaging' }}</h3>
+        <p>{{ 'تغليف فاخر يحفظ المنتج ويمنع أي ضرر أثناء النقل.' if is_ar() else 'Premium packaging that protects the product during transit.' }}</p>
+      </article>
+      <article class="shipping-card">
+        <h3>{{ 'ضمان الجودة' if is_ar() else 'Quality guarantee' }}</h3>
+        <p>{{ 'ضمان وصول المنتج بأفضل حالة أو استرجاع كامل المبلغ.' if is_ar() else 'Guaranteed to arrive in top condition or a full refund.' }}</p>
+      </article>
+    </div>
+  </section>
+</main>
+{% endblock %}

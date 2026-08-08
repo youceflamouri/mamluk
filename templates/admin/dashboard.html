@@ -1,0 +1,120 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<h2>{{ 'تحليل أرقام الموقع' if is_ar() else 'Site Analytics' }}</h2>
+
+<div class="stat-cards">
+  <div class="stat-card">
+    <span class="stat-label">{{ 'إجمالي الطلبات' if is_ar() else 'Total orders' }}</span>
+    <span class="stat-value">{{ total_orders }}</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">{{ 'إجمالي الإيرادات' if is_ar() else 'Total revenue' }}</span>
+    <span class="stat-value">{{ revenue }} د.ج</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">{{ 'متوسط قيمة الطلب' if is_ar() else 'Avg. order value' }}</span>
+    <span class="stat-value">{{ avg_order }} د.ج</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">{{ 'إجمالي الزيارات' if is_ar() else 'Total page views' }}</span>
+    <span class="stat-value">{{ total_visits }}</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">{{ 'زوار فريدون' if is_ar() else 'Unique visitors' }}</span>
+    <span class="stat-value">{{ unique_visitors }}</span>
+  </div>
+</div>
+
+<div class="dashboard-grid">
+  <section class="dash-panel">
+    <h3>{{ 'الزيارات خلال آخر 14 يومًا' if is_ar() else 'Visits over the last 14 days' }}</h3>
+    <div class="bar-chart">
+      {% for d in timeline %}
+      <div class="bar-col" title="{{ d.day }}: {{ d.visits }} {{ 'زيارة' if is_ar() else 'visits' }}">
+        <div class="bar" data-pct="{{ (d.visits / max_visits_day * 100) if max_visits_day else 0 }}"></div>
+        <span class="bar-label">{{ d.day[5:] }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="dash-panel">
+    <h3>{{ 'أكثر الصفحات زيارة' if is_ar() else 'Most visited pages' }}</h3>
+    <div class="hbar-list">
+      {% for page in top_pages %}
+      <div class="hbar-row">
+        <span class="hbar-name">{{ page.path }}</span>
+        <div class="hbar-track"><div class="hbar-fill" data-pct="{{ (page.c / max_top_page * 100) if max_top_page else 0 }}"></div></div>
+        <span class="hbar-value">{{ page.c }}</span>
+      </div>
+      {% else %}
+      <p class="muted">{{ 'لا توجد بيانات بعد' if is_ar() else 'No data yet' }}</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="dash-panel">
+    <h3>{{ 'الأكثر مبيعًا' if is_ar() else 'Best-selling products' }}</h3>
+    <div class="hbar-list">
+      {% for name, count in top_products %}
+      <div class="hbar-row">
+        <span class="hbar-name">{{ name }}</span>
+        <div class="hbar-track"><div class="hbar-fill accent" data-pct="{{ (count / max_top_product * 100) if max_top_product else 0 }}"></div></div>
+        <span class="hbar-value">{{ count }}</span>
+      </div>
+      {% else %}
+      <p class="muted">{{ 'لا توجد طلبات بعد' if is_ar() else 'No orders yet' }}</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="dash-panel">
+    <h3>{{ 'أحدث الطلبات' if is_ar() else 'Recent orders' }}</h3>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>{{ 'الاسم' if is_ar() else 'Name' }}</th>
+          <th>{{ 'الإجمالي' if is_ar() else 'Total' }}</th>
+          <th>{{ 'الحالة' if is_ar() else 'Status' }}</th>
+          <th>{{ 'التاريخ' if is_ar() else 'Date' }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in recent_orders %}
+        <tr>
+          <td>{{ o.id }}</td>
+          <td>{{ o.full_name }}</td>
+          <td>{{ o.total }} د.ج</td>
+          <td><span class="status-badge status-{{ o.status }}">{{ o.status }}</span></td>
+          <td>{{ o.created_at[:16] }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="muted">{{ 'لا توجد طلبات بعد' if is_ar() else 'No orders yet' }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<div class="admin-login mt-20">
+  <h3>{{ 'تغيير كلمة المرور' if is_ar() else 'Change password' }}</h3>
+  {% if request.args.get('pw_ok') %}
+  <p class="form-success">{{ 'تم تحديث كلمة المرور بنجاح.' if is_ar() else 'Password updated successfully.' }}</p>
+  {% elif request.args.get('pw_error') == 'mismatch' %}
+  <p class="form-error">{{ 'كلمتا المرور غير متطابقتين.' if is_ar() else 'Passwords do not match.' }}</p>
+  {% elif request.args.get('pw_error') == 'weak' %}
+  <p class="form-error">{{ 'كلمة المرور ضعيفة جدًا أو مطابقة لاسم المستخدم (10 أحرف على الأقل).' if is_ar() else 'Password too weak or matches your username (min. 10 characters).' }}</p>
+  {% endif %}
+  <form method="post" action="{{ url_for('admin_change_password') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <label>{{ 'كلمة المرور الجديدة (10 أحرف على الأقل)' if is_ar() else 'New password (min. 10 characters)' }}
+      <input type="password" name="new_password" minlength="10" required />
+    </label>
+    <label>{{ 'تأكيد كلمة المرور' if is_ar() else 'Confirm password' }}
+      <input type="password" name="confirm_password" minlength="10" required />
+    </label>
+    <button type="submit" class="btn primary">{{ 'تحديث' if is_ar() else 'Update' }}</button>
+  </form>
+</div>
+{% endblock %}

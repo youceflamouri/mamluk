@@ -1,0 +1,12 @@
+{
+  "name": "ملابس المماليك",
+  "short_name": "Mamluk",
+  "description": "متجر ملابس عصري مع تجربة دخول تفاعلية للملابس",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#140305",
+  "theme_color": "#7a0f18",
+  "icons": [
+    { "src": "/static/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

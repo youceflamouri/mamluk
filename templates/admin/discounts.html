@@ -1,0 +1,73 @@
+{% extends "admin/base.html" %}
+{% block admin_content %}
+<h2>{{ 'أكواد الخصم' if is_ar() else 'Discount Codes' }}</h2>
+
+{% if request.args.get('error') %}
+<p class="form-error">{{ request.args.get('error') }}</p>
+{% endif %}
+
+<div class="admin-login mb-20">
+  <h3>{{ 'إنشاء كود جديد' if is_ar() else 'Create a new code' }}</h3>
+  <form method="post" action="{{ url_for('admin_discount_create') }}" class="discount-create-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <label>{{ 'الكود' if is_ar() else 'Code' }}
+      <input type="text" name="code" maxlength="30" placeholder="SUMMER25" required />
+    </label>
+    <label>{{ 'نوع الخصم' if is_ar() else 'Discount type' }}
+      <select name="discount_type">
+        <option value="percent">{{ 'نسبة مئوية %' if is_ar() else 'Percentage %' }}</option>
+        <option value="fixed">{{ 'مبلغ ثابت (د.ج)' if is_ar() else 'Fixed amount (DZD)' }}</option>
+      </select>
+    </label>
+    <label>{{ 'القيمة' if is_ar() else 'Value' }}
+      <input type="number" name="value" min="1" max="9999999" required />
+    </label>
+    <label>{{ 'الحد الأقصى للاستخدام (اختياري)' if is_ar() else 'Max uses (optional)' }}
+      <input type="number" name="max_uses" min="1" />
+    </label>
+    <label>{{ 'تاريخ الانتهاء (اختياري)' if is_ar() else 'Expiry date (optional)' }}
+      <input type="date" name="expires_at" />
+    </label>
+    <button type="submit" class="btn primary">{{ 'إنشاء' if is_ar() else 'Create' }}</button>
+  </form>
+</div>
+
+<table class="admin-table">
+  <thead>
+    <tr>
+      <th>{{ 'الكود' if is_ar() else 'Code' }}</th>
+      <th>{{ 'النوع' if is_ar() else 'Type' }}</th>
+      <th>{{ 'القيمة' if is_ar() else 'Value' }}</th>
+      <th>{{ 'الاستخدام' if is_ar() else 'Uses' }}</th>
+      <th>{{ 'الانتهاء' if is_ar() else 'Expires' }}</th>
+      <th>{{ 'الحالة' if is_ar() else 'Status' }}</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for c in codes %}
+    <tr>
+      <td><strong>{{ c.code }}</strong></td>
+      <td>{{ 'نسبة %' if c.discount_type == 'percent' else 'ثابت' }}</td>
+      <td>{{ c.value }}{{ '%' if c.discount_type == 'percent' else ' د.ج' }}</td>
+      <td>{{ c.used_count }}{% if c.max_uses %} / {{ c.max_uses }}{% endif %}</td>
+      <td>{{ c.expires_at[:10] if c.expires_at else '-' }}</td>
+      <td><span class="status-badge {{ 'status-delivered' if c.active else 'status-cancelled' }}">{{ ('مفعّل' if is_ar() else 'Active') if c.active else ('معطّل' if is_ar() else 'Disabled') }}</span></td>
+      <td class="discount-actions">
+        <form method="post" action="{{ url_for('admin_discount_toggle', discount_id=c.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <button type="submit" class="btn ghost small">{{ 'تعطيل' if c.active else 'تفعيل' }}</button>
+        </form>
+        <form method="post" action="{{ url_for('admin_discount_delete', discount_id=c.id) }}"
+              class="confirm-submit" data-confirm="{{ 'هل أنت متأكد؟' if is_ar() else 'Are you sure?' }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <button type="submit" class="btn ghost small">{{ 'حذف' if is_ar() else 'Delete' }}</button>
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7" class="muted">{{ 'لا توجد أكواد بعد' if is_ar() else 'No codes yet' }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
